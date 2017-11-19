@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_item1"
+        android:icon="@drawable/pictures_icon"
+        android:title="View Pictures"
+        app:showAsAction="always|withText"/>
+    <item
+        android:id="@+id/action_item2"
+        android:icon="@drawable/camera_icon"
+        android:title="Take Picture"
+        app:showAsAction="always|withText"/>
+    <item
+        android:id="@+id/action_item3"
+        android:icon="@drawable/map_icon"
+        android:title="View Places"
+        app:showAsAction="always|withText"/>
+</menu>
