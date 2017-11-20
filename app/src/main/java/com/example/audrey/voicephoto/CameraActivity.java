@@ -1,9 +1,11 @@
 package com.example.audrey.voicephoto;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 import static android.provider.MediaStore.EXTRA_OUTPUT;
@@ -31,7 +35,8 @@ public class CameraActivity extends AppCompatActivity {
     ImageView imgview;
     File photoFile;
     Uri photoURI;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
     String mCurrentPhotoPath;
 
     @Override
@@ -56,6 +61,11 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Save image, tag, location data to database
+     *
+     * @param v
+     */
     public void save(View v) {
         tag = (EditText) findViewById(R.id.tagEdit);
         lat = (EditText) findViewById(R.id.latEdit);
@@ -70,10 +80,30 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Get user speech input
+     *
+     * @param v
+     */
     public void speakTag(View v) {
+        Log.v("DEBUG", "speakTag");
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Speak the tag you would like to give your image");
 
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+
+        }
     }
 
+    /**
+     * Method to take picture
+     */
     protected void takePicture() {
         Intent takePictureIntent = new Intent(ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -94,22 +124,37 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Activity result for taking picture and speaking tag
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         resultCode = RESULT_OK;
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            speakTag(null);
+
             Bitmap mbmp = (Bitmap) data.getExtras().get("data");
             imgview = (ImageView) findViewById(R.id.imgv);
             imgview.setImageBitmap(mbmp);
-
             try {
                 FileOutputStream out = new FileOutputStream(photoFile);
                 mbmp.compress(Bitmap.CompressFormat.PNG, 90, out);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        } else if (requestCode == REQ_CODE_SPEECH_INPUT) {
+            if (resultCode == RESULT_OK && null != data) {
 
+                ArrayList<String> result = data
+                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                tag = (EditText) findViewById(R.id.tagEdit);
+                tag.setText(result.get(0));
+            }
         } else {
             Log.v("Tag", "Something wrong in onActivityResult");
         }

@@ -34,8 +34,8 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
  *
  * TODO:
  * Implement search/voice search
+ * For voice search, look here: https://stackoverflow.com/questions/42393718/styling-search-view-on-android-min21/42519398#42519398
  * Use sensor GPS location and add location name along with lat/lon coordinates
- * Make CameraActivity give voice/other prompt for voice tag
  * Implement map view
  */
 
