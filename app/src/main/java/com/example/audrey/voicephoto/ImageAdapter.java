@@ -56,6 +56,7 @@ public class ImageAdapter extends BaseAdapter {
 
             String imagePath = imagePaths.get(position);
             holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+            holder.imageView.setTag(imagePath); // tag image with path
 
             // TODO: figure out why padding is weird
             holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

@@ -82,7 +82,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return imagePaths;
     }
 
-    /* Search for single record */
+    public ArrayList<String> getImageFromPath(String path) {
+        String query = "SELECT * FROM " + TABLE_IMAGES + " WHERE path = '" + path + "'";
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor c = database.rawQuery(query, null);
+
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            ArrayList<String> result = new ArrayList<>();
+            result.add(c.getString(c.getColumnIndex(KEY_TAGS)));
+            result.add(c.getString(c.getColumnIndex(KEY_LAT)));
+            result.add(c.getString(c.getColumnIndex(KEY_LON)));
+
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * NOT DONE
+     * Search for records by tag or location
+    * */
     public String searchForImage(String search) {
         String query = "SELECT PATH FROM " + TABLE_IMAGES + " WHERE tags = " + search + " OR lat = " + search + " OR lon = " + search;
         SQLiteDatabase database = getReadableDatabase();
@@ -90,6 +111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (c.getCount() > 0) {
             c.moveToFirst();
+            // insert for loop here
             String path = c.getString(c.getColumnIndex(KEY_PATH));
             return path;
         } else {

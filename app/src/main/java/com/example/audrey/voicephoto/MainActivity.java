@@ -2,6 +2,7 @@ package com.example.audrey.voicephoto;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ClipData;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -23,13 +24,24 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import static android.R.attr.tag;
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 /**
- * Takes pictures adn adds a tag using a voice command
+ * Takes pictures and adds a tag using a voice command
  * GPS coordinates saved to mark location of the image taken
  * Images saved and search using tag or location
+ *
+ * TODO:
+ * Implement search/voice search
+ * Use sensor GPS location and add location name along with lat/lon coordinates
+ * Make CameraActivity give voice/other prompt for voice tag
+ * Implement map view
  */
 
 public class MainActivity extends AppCompatActivity {
+
+    public final static String EXTRA_MESSAGE = "com.example.audrey.voicephoto.MESSAGE";
 
     protected static DatabaseHelper databaseHelper;
     ImageAdapter adapter;
@@ -73,9 +85,10 @@ public class MainActivity extends AppCompatActivity {
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedItem = parent.getItemAtPosition(position).toString();
-                    Log.v("DEBUG", "GridView item clicked : " +selectedItem
-                            + "\nAt index position : " + position);
+                    ImageAdapter.ViewHolder viewHolder = (ImageAdapter.ViewHolder) view.getTag();
+                    String tag = viewHolder.imageView.getTag().toString();
+                    Log.v("DEBUG", "GridView " + tag);
+                    imageClick(tag);
                 }
             });
         } else {
@@ -89,8 +102,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Go to 'view picture' mode
      */
-    public void imageClick(View v) {
-
+    private void imageClick(String path) {
+        Intent intent = new Intent(this, ViewSinglePictureActivity.class);
+        String message = path;
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     /**
