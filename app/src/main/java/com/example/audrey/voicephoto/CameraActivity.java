@@ -70,6 +70,10 @@ public class CameraActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
     }
 
+    public void speakTag(View v) {
+
+    }
+
     protected void takePicture() {
         Intent takePictureIntent = new Intent(ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent

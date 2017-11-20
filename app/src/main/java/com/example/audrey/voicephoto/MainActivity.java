@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    // SQLiteDatabase db = null;
     protected static DatabaseHelper databaseHelper;
     ImageAdapter adapter;
 
@@ -68,10 +68,22 @@ public class MainActivity extends AppCompatActivity {
             gridview = (GridView) findViewById(R.id.gridview);
             adapter = new ImageAdapter(MainActivity.this, imagePaths);
             gridview.setAdapter(adapter);
+
+            // set item click listener
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedItem = parent.getItemAtPosition(position).toString();
+                    Log.v("DEBUG", "GridView item clicked : " +selectedItem
+                            + "\nAt index position : " + position);
+                }
+            });
         } else {
             Toast.makeText(MainActivity.this, "You haven't taken any pictures yet!",
                     Toast.LENGTH_LONG).show();
         }
+
+        // TODO: add search bar listener for text and voice
     }
 
     /**

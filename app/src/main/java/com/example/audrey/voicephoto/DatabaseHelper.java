@@ -76,29 +76,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c != null) {
             while (c.moveToNext()) {
                 String path = c.getString(c.getColumnIndex(KEY_PATH));
-                Log.v("DBHelper: ", "Path: " + path);
                 imagePaths.add(path);
             }
         }
         return imagePaths;
     }
 
-    /* This method is used to get a single record from Database.
-       I have given an example, you have to do something like this.
-    public String getStringByCode(int code) {
-        String query = "SELECT * FROM " + TABLE_IMAGES + " WHERE " + ID + " = " + code;
-        String emp = new String();
+    /* Search for single record */
+    public String searchForImage(String search) {
+        String query = "SELECT PATH FROM " + TABLE_IMAGES + " WHERE tags = " + search + " OR lat = " + search + " OR lon = " + search;
         SQLiteDatabase database = getReadableDatabase();
         Cursor c = database.rawQuery(query, null);
 
         if (c.getCount() > 0) {
-
             c.moveToFirst();
-            int code = c.getInt(c.getColumnIndex(ID));
-            String name = c.getString(c.getColumnIndex(KEY_TAGS));
-            String email = c.getString(c.getColumnIndex(KEY_LAT));
-            String address = c.getString(c.getColumnIndex(KEY_LONG));
+            String path = c.getString(c.getColumnIndex(KEY_PATH));
+            return path;
+        } else {
+            return "NORESULTS";
         }
-        return emp;
-    }*/
+    }
 }

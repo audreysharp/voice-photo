@@ -36,9 +36,18 @@
             <EditText
                 android:id="@+id/tagEdit"
                 android:layout_height="50dp"
-                android:layout_width="280dp"
+                android:layout_width="250dp"
                 android:hint="Enter tag for image..."
                 android:inputType="text"/>
+
+            <ImageButton
+                android:id="@+id/speakIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:onClick="speakTag"
+                android:background="@drawable/mic_icon" />
 
         </LinearLayout>
 

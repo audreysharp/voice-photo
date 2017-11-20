@@ -53,8 +53,12 @@ public class ImageAdapter extends BaseAdapter {
             img = inflater.inflate(R.layout.grid_single, parent, false);
             holder = new ViewHolder();
             holder.imageView = (ImageView) img.findViewById(R.id.imgView);
+
             String imagePath = imagePaths.get(position);
             holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+
+            // TODO: figure out why padding is weird
+            holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             img.setTag(holder);
         } else {
             holder = (ViewHolder) img.getTag();
