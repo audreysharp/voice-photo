@@ -1,7 +1,9 @@
 package com.example.audrey.voicephoto;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,22 +46,25 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.grid_single, null);
-            imageView = (ImageView) convertView.findViewById(R.id.imgView);
-
+        View img = convertView;
+        ViewHolder holder;
+        if (img == null) {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            img = inflater.inflate(R.layout.grid_single, parent, false);
+            holder = new ViewHolder();
+            holder.imageView = (ImageView) img.findViewById(R.id.imgView);
             String imagePath = imagePaths.get(position);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
-            imageView.getLayoutParams().height = 400;
-            imageView.getLayoutParams().width = 400;
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(2, 2, 2, 2);
+            holder.imageView.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+            img.setTag(holder);
         } else {
-            imageView = (ImageView) convertView;
+            holder = (ViewHolder) img.getTag();
         }
 
-        return imageView;
+        return img;
+    }
+
+    static class ViewHolder {
+        ImageView imageView;
     }
 
 }

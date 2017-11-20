@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,10 +23,11 @@ import java.text.SimpleDateFormat;
 
 import static android.provider.MediaStore.ACTION_IMAGE_CAPTURE;
 import static android.provider.MediaStore.EXTRA_OUTPUT;
+import static com.example.audrey.voicephoto.MainActivity.databaseHelper;
 
 public class CameraActivity extends AppCompatActivity {
 
-    EditText tag;
+    EditText tag, lat, lon;
     ImageView imgview;
     File photoFile;
     Uri photoURI;
@@ -55,7 +57,17 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     public void save(View v) {
+        tag = (EditText) findViewById(R.id.tagEdit);
+        lat = (EditText) findViewById(R.id.latEdit);
+        lon = (EditText) findViewById(R.id.lonEdit);
 
+        String tagString = tag.getText().toString();
+        String latString = lat.getText().toString();
+        String lonString = lon.getText().toString();
+
+        databaseHelper.addPhoto(mCurrentPhotoPath, tagString, latString, lonString);
+        Toast.makeText(CameraActivity.this, "Picture saved!",
+                Toast.LENGTH_LONG).show();
     }
 
     protected void takePicture() {

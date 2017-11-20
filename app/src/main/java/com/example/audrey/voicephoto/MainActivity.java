@@ -30,9 +30,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    SQLiteDatabase db = null;
-    File photoFile;
+    // SQLiteDatabase db = null;
+    protected static DatabaseHelper databaseHelper;
+    ImageAdapter adapter;
 
+    File photoFile;
     private GridView gridview;
     private ImageAdapter gridSquare;
     ArrayList<String> imagePaths;
@@ -56,14 +58,16 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // get list of images from database
-        DatabaseHelper databaseHelper = new DatabaseHelper(MainActivity.this);
+        databaseHelper = new DatabaseHelper(MainActivity.this);
         imagePaths = new ArrayList<>();
         imagePaths = databaseHelper.getAllImages();
+        Log.v("DEBUG", imagePaths.toString());
 
         if (imagePaths.size() > 0) {
             // populate grid view
             gridview = (GridView) findViewById(R.id.gridview);
-            gridview.setAdapter(new ImageAdapter(MainActivity.this, imagePaths));
+            adapter = new ImageAdapter(MainActivity.this, imagePaths);
+            gridview.setAdapter(adapter);
         } else {
             Toast.makeText(MainActivity.this, "You haven't taken any pictures yet!",
                     Toast.LENGTH_LONG).show();

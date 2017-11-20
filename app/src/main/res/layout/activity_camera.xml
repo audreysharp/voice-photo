@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/imgv"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_marginTop="10dp"/>
 
         <LinearLayout
@@ -36,9 +36,47 @@
             <EditText
                 android:id="@+id/tagEdit"
                 android:layout_height="50dp"
-                android:layout_width="250dp"
+                android:layout_width="280dp"
                 android:hint="Enter tag for image..."
                 android:inputType="text"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="LATITUDE" />
+
+            <EditText
+                android:id="@+id/latEdit"
+                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:text="20°N"
+                android:gravity="center"
+                android:inputType="none" />
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="Longitude" />
+
+            <EditText
+                android:id="@+id/lonEdit"
+                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:text="20°W"
+                android:gravity="center"
+                android:inputType="none" />
 
         </LinearLayout>
 
