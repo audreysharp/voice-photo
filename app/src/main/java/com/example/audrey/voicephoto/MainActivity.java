@@ -35,7 +35,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
  * TODO:
  * Implement search/voice search
  * For voice search, look here: https://stackoverflow.com/questions/42393718/styling-search-view-on-android-min21/42519398#42519398
- * Use sensor GPS location and add location name along with lat/lon coordinates
+ * Use sensor GPS location and add location name along with lat/lon coordinates (have to add another field to table/database)
  * Implement map view
  */
 
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             adapter = new ImageAdapter(MainActivity.this, imagePaths);
             gridview.setAdapter(adapter);
 
-            // set item click listener
+            // set GridView item click listener
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
