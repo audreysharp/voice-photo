@@ -2,9 +2,11 @@ package com.example.audrey.voicephoto;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
@@ -17,12 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static android.R.attr.tag;
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -31,12 +35,6 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
  * Takes pictures and adds a tag using a voice command
  * GPS coordinates saved to mark location of the image taken
  * Images saved and search using tag or location
- *
- * TODO:
- * Implement search/voice search
- * For voice search, look here: https://stackoverflow.com/questions/42393718/styling-search-view-on-android-min21/42519398#42519398
- * Use sensor GPS location and add location name along with lat/lon coordinates (have to add another field to table/database)
- * Implement map view
  */
 
 public class MainActivity extends AppCompatActivity {
@@ -50,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridview;
     private ImageAdapter gridSquare;
     ArrayList<String> imagePaths;
+    EditText searchTag;
+    private static final int REQ_CODE_SPEECH_INPUT = 100;
+    ArrayList<String> result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,69 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
 
-        // TODO: add search bar listener for text and voice
+    }
+
+    /**
+     * Get user speech input
+     *
+     * @param v
+     */
+    public void speakTag(View v) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Speak what you would like to search for");
+
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+
+        }
+    }
+
+    /**
+     * Activity result for taking picture and speaking tag
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        resultCode = RESULT_OK;
+        if (requestCode == REQ_CODE_SPEECH_INPUT) {
+            if (resultCode == RESULT_OK && null != data) {
+
+                result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                searchTag = (EditText) findViewById(R.id.search_bar_edit_text);
+                searchTag.setText(result.get(0));
+                findViewById(R.id.findButton).callOnClick();
+            }
+        } else {
+            Log.v("Tag", "Something wrong in onActivityResult");
+        }
+    }
+
+    //find images with given search input
+    public void find(View v) {
+        searchTag = (EditText) findViewById(R.id.search_bar_edit_text);
+
+        //makes sure search bar has text to search
+        if (searchTag.getText().toString().matches("")) {
+            Toast.makeText(this, "Type in search input", Toast.LENGTH_SHORT).show();
+        } else {
+            String searchTagStr = searchTag.getText().toString();
+            searchTag.setText("");
+
+            Log.v("Tag", searchTagStr);
+            Intent intent = new Intent(this, ViewSelectedPictures.class);
+            intent.putExtra(EXTRA_MESSAGE, searchTagStr);
+            startActivity(intent);
+        }
+
     }
 
     /**
@@ -134,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_item3: // view places
                 Log.v("DEBUG", "View places");
-                // intent = new Intent (this, ViewPlacesActivity.class);
-                // startActivity(intent);
+                intent = new Intent (this, ViewPlacesActivity.class);
+                startActivity(intent);
                 break;
         }
     }

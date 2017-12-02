@@ -2,32 +2,73 @@ package com.example.audrey.voicephoto;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 import static com.example.audrey.voicephoto.MainActivity.databaseHelper;
 
-public class ViewSinglePictureActivity extends AppCompatActivity {
+/**
+ * Search function
+ */
+
+public class ViewSelectedPictures extends AppCompatActivity {
+    public final static String EXTRA_MESSAGE = "com.example.audrey.voicephoto.MESSAGE";
+    ArrayList<String> imagePaths;
+    private GridView gridview;
+    ImageAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_single_picture);
+        setContentView(R.layout.activity_view_selected_pictures);
 
+        //set text at top of screen to the search tag
         Intent intent = getIntent();
-        String path = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String tag = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        TextView tagText = (TextView) findViewById(R.id.tagName);
+        tagText.setText("Images for: " + tag);
 
-        ArrayList<String> imageDetails = databaseHelper.getImageFromPath(path);
-        populateImageDetails(path, imageDetails);
+        // get list of images from database
+        imagePaths = new ArrayList<>();
+        imagePaths = databaseHelper.searchForImage(tag);
+        Log.v("DEBUG", imagePaths.toString());
+
+        if (imagePaths.size() > 0) {
+            // populate grid view
+            gridview = (GridView) findViewById(R.id.gridview);
+            adapter = new ImageAdapter(this, imagePaths);
+            gridview.setAdapter(adapter);
+
+            // set GridView item click listener
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ImageAdapter.ViewHolder viewHolder = (ImageAdapter.ViewHolder) view.getTag();
+                    String tag = viewHolder.imageView.getTag().toString();
+                    Log.v("DEBUG", "GridView " + tag);
+                    imageClick(tag);
+                }
+            });
+        } else {
+            Toast.makeText(this, "No images match the specified search input",
+                    Toast.LENGTH_LONG).show();
+        }
 
         // add event listener for bottom navigation bar
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
@@ -43,22 +84,13 @@ public class ViewSinglePictureActivity extends AppCompatActivity {
     }
 
     /**
-     * Populate ImageView and TextViews
-     * @param path
-     * @param imageDetails
+     * Go to 'view picture' mode
      */
-    private void populateImageDetails(String path, ArrayList<String> imageDetails) {
-        ImageView imageView = (ImageView) findViewById(R.id.singleImgView);
-        EditText tagEdit = (EditText) findViewById(R.id.singleTagEdit);
-        EditText latEdit = (EditText) findViewById(R.id.singleLatEdit);
-        EditText lonEdit = (EditText) findViewById(R.id.singleLonEdit);
-        EditText locEdit = (EditText) findViewById(R.id.singleLocEdit);
-
-        imageView.setImageBitmap(BitmapFactory.decodeFile(path));
-        tagEdit.setText(imageDetails.get(0));
-        latEdit.setText(imageDetails.get(1));
-        lonEdit.setText(imageDetails.get(2));
-        locEdit.setText(imageDetails.get(3));
+    private void imageClick(String path) {
+        Intent intent = new Intent(this, ViewSinglePictureActivity.class);
+        String message = path;
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
     /**
@@ -89,4 +121,5 @@ public class ViewSinglePictureActivity extends AppCompatActivity {
                 break;
         }
     }
+
 }
