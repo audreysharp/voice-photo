@@ -6,7 +6,7 @@ This is an Android application that lets you to take pictures and use your voice
 ### Demo
 [YouTube video demo of application](https://youtu.be/3m6f2JBsFj0)
 
-![screenshot](screenshot.png)
+![screenshot](screenshot1.png)
 
 ### Run Instructions
 1. Clone this Github repository with `git clone https://github.com/audreysharp/voice-photo`
